@@ -1,0 +1,27 @@
+{
+  "name": "deploy-bot",
+  "subdomain": "deploy",
+  "scripts": {
+    "test": ""
+  },
+  "author": "Jonathan Sanchez <me@jsan.me>",
+  "repository": {
+    "type": "git",
+    "url": ""
+  },
+  "version": "0.0.1",
+  "engines": {
+    "node": "0.10.x"
+  },
+  "main": "lib/index",
+  "dependencies": {
+    "commander": "latest",
+    "winston": "latest",
+    "colors": "latest",
+    "q": "latest",
+    "ssh2": "latest"
+  },
+  "devDependencies": {
+    "jshint": "latest"
+  }
+}
