@@ -16,63 +16,77 @@ Why Node.js ?
 
 ```javascript
 deploy = require('deploy');
-q = require('q');
+Q = require('q');
 
-cwd = '/home/user/myproject';
-
-deploy.connect({
+var host = {
     host: 'localhost',
     port: 2222,
     username: 'vagrant',
     privateKey: privateKey
-}).then(function (shell) {
-    q.all([
+};
+var cwd = '/home/user/myproject';
+
+deploy.connect(host, function (shell) {
+    return Q.all([
         shell.exec('mkdir -p ' + cwd + '/var/log/'),
         shell.exec('git clone git@github.com:you/myproject ' + cwd)
     ]).then(function () {
         return shell.exec('make install', cwd);
     }).then(function () {
         return shell.exec(cwd + 'myproject/bin/run');
+
+    }).fail(function (error) {
+        console.error(error.stack || error);
+    }).then(function () {
+        shell.disconnect();
+        process.exit();
     });
-}).fail(function (error) {
-    console.error('sometgins went wrong...');
-    console.error(error.stack || error);
-}).then(function () {
-    deploy.disconnect();
-    process.exit();
 });
 ```
 
 
 ```javascript
-yum = require('deploy').yum;
-file = require('deploy').file;
+deploy.connect(host, function (shell) {
+    shell.profile('yum', function () {
+        return Q.all([
+            yum.install('nginx', 'postgres'),
+            file.envVars('/home/user/env', {
+                DB_HOST: 'localhost',
+                DB_USER: 'user',
+                EVIRONMENENT: 'staging'
+            }),
+            file.addline('/home/user/.bashrc', 'source ~/env'),
+            file.upstart('/etc/init/myproject.conf', {
+                script: '/bin/myproject run',
+            })
+        ]).then(function () {
+                exec('initctl start myproject');
+        });
 
-q.all([
-    yum.repo(''),
-    yum.install('nginx', 'postgres'),
-
-    file.env('/home/user/env', {
-        DB_HOST: 'localhost',
-        DB_USER: 'user',
-        EVIRONMENENT: 'staging'
-    }),
-
-    file.addline('/home/user/.profilerc', 'source ~/env'),
-
-    file.upstart('/etc/init/myproject.conf', {
-        script: '/bin/myproject run',
-    })
-]).then(function () {
-    exec('initctl start myproject');
+    }).fail(function (error) {
+        console.error(error.stack || error);
+    }).then(function () {
+        shell.disconnect();
+        process.exit();
+    });
 });
 ```
 
 ```javascript
-reguisteTask('restart-pg', function() {
-    pg = require('deploy-pg');
-    pg.install().then(function () {
-        pg.restart();
+deploy.reguisteProfile('mongo-server', function(shell, callback) {
+    return shell.profile('yum', 'filesystem', function (yum, fs) {
+        Q.all([
+            yum.install('mongo', 'mongo-server'),
+            fs.templateFile('/etc/mongod.conf')
+        ]).then(function () {
+            return shell.profile('sudo', function (yum, fs) {
+                return sudo.exec('mongod -f /etc/mongod.conf');
+            }).done(function () {
+                callback({
+                    restart: function() {/* ... */}
+                });
+            });
+        });
     });
 });
 ```
@@ -86,7 +100,8 @@ Roadmap
 -------
 
 - apt, pacman profiles
-- config backend -> json or db ?
+- config backend -> json or mongodb ?
 - simple cmd interface
 - simple web gui
+- load multiple profile
 
