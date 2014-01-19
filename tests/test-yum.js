@@ -20,7 +20,6 @@ deploy.connect({
             return yum.install('hello');
         });
     }).fail(function (error) {
-        console.error('sometgins went wrong...');
         console.error(error.stack || error);
     }).then(function () {
         shell.disconnect();

@@ -1,6 +1,6 @@
 
-Node Deploy Bot
-===============
+Deploy Bot
+==========
 
 A simple api for an **agent less** DevOps infrastructure provisionning tool.
 
@@ -100,8 +100,10 @@ Roadmap
 -------
 
 - apt, pacman profiles
+- load multiple profile
 - config backend -> json or mongodb ?
+- testable
+- profile migration
 - simple cmd interface
 - simple web gui
-- load multiple profile
 

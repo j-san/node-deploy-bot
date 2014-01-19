@@ -7,7 +7,7 @@
   "author": "Jonathan Sanchez <me@jsan.me>",
   "repository": {
     "type": "git",
-    "url": ""
+    "url": "git@github.com:j-san/node-deploy-bot.git"
   },
   "version": "0.0.1",
   "engines": {

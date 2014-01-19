@@ -20,7 +20,6 @@ deploy.connect({
         console.log(file);
         //return fs.write('/etc/hosts');
     }).fail(function (error) {
-        console.error('sometgins went wrong...');
         console.error(error.stack || error);
     }).then(function () {
         shell.disconnect();
