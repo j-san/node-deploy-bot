@@ -9,7 +9,7 @@
     "type": "git",
     "url": "git@github.com:j-san/node-deploy-bot.git"
   },
-  "version": "0.0.1",
+  "version": "0.0.2",
   "engines": {
     "node": "0.10.x"
   },

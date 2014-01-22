@@ -4,8 +4,9 @@ require('colors');
 
 var deploy = require('../lib'),
     fs = require('fs'),
+    path = require('path'),
     Q = require('q'),
-    privateKey = fs.readFileSync('/home/jsanchezpando/.vagrant.d/insecure_private_key');
+    privateKey = fs.readFileSync(path.normalize(process.env.HOME + '/.vagrant.d/insecure_private_key'));
 
 
 deploy.connect({

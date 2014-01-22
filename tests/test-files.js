@@ -4,18 +4,17 @@ require('colors');
 
 var deploy = require('../lib'),
     fs = require('fs'),
-    Q = require('q'),
-    privateKey = fs.readFileSync('/home/jsanchezpando/.vagrant.d/insecure_private_key');
+    Q = require('q');
 
 
 deploy.connect({
     host: 'localhost',
     port: 2222,
     username: 'vagrant',
-    privateKey: privateKey
+    privateKey: process.env.HOME + '/.vagrant.d/insecure_private_key'
 }, function (shell) {
     return shell.profile('filesystem', function (fs) {
-        return fs.read('/etc/hosts');
+        return fs.file('/etc/hosts');
     }).then(function (file) {
         console.log(file);
         //return fs.write('/etc/hosts');
