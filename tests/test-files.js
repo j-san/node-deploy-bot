@@ -1,11 +1,6 @@
 
-
-require('colors');
-
 var deploy = require('../lib'),
-    fs = require('fs'),
     Q = require('q');
-
 
 deploy.connect({
     host: 'localhost',
