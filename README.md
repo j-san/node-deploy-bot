@@ -14,16 +14,96 @@ Why Node.js ?
 3- promisses and events are perfect for dependencies and notifications
 
 
+API
+---
+
+### Connect
+
 ```javascript
 deploy = require('deploy');
-Q = require('q');
 
 var host = {
     host: 'localhost',
     port: 2222,
     username: 'vagrant',
-    privateKey: privateKey
+    privateKey: process.env.HOME + '/.vagrant.d/insecure_private_key'
 };
+
+deploy.connect(host, function (shell) {
+    console.log(shell.banner);
+    shell.disconnect();
+    process.exit();
+});
+```
+
+### Install
+
+```javascript
+deploy.connect(host, function (shell) {
+
+    shell.profile('yum').then(function (yum) {
+
+        return yum.install('nodejs');
+
+    }).then(function () {
+        shell.disconnect();
+        process.exit();
+    });
+});
+```
+
+
+### Configure
+
+```javascript
+deploy.connect(host, function (shell) {
+
+    shell.profile('filesystem', 'sudo').then(function (fs, sudo) {
+        return [
+            sudo.user({
+                name: 'appuser',
+                home: '/var/lib/app',
+                group: 'users'
+            }),
+            fs.file('/etc/logrotate.d/mongodb', {
+                template: 'mongodb/logrotate'
+            }),
+            fs.file('/etc/mongod.conf', {
+                template: 'mongodb/conf'
+            })
+        ];
+    }).then(function () {
+        shell.disconnect();
+        process.exit();
+    });
+});
+```
+### Script
+
+```javascript
+deploy.registerProfile('myprofile', function (shell) {
+    // do stuff here
+    // return an object
+    return {
+        foo: function () {},
+        bar: function () {}
+    }
+});
+
+deploy.connect(host, function (shell) {
+    shell.profile('myprofile'); // execute stuff
+});
+
+```
+
+
+Examples
+--------
+
+```javascript
+deploy = require('deploy');
+Q = require('q');
+
 var cwd = '/home/user/myproject';
 
 deploy.connect(host, function (shell) {
@@ -34,23 +114,22 @@ deploy.connect(host, function (shell) {
         return shell.exec('make install', cwd);
     }).then(function () {
         return shell.exec(cwd + 'myproject/bin/run');
-
-    }).fail(function (error) {
-        console.error(error.stack || error);
-    }).then(function () {
+    }).finally(function () {
         shell.disconnect();
-        process.exit();
     });
+}).fail(function (error) {
+    console.error(error.stack || error);
+}).done(function () {
+    process.exit();
 });
 ```
-
 
 ```javascript
 deploy.connect(host, function (shell) {
     shell.profile('yum', function () {
-        return Q.all([
+        return [
             yum.install('nginx', 'postgres'),
-            file.envVars('/home/user/env', {
+            file.envFile('/home/user/env', {
                 DB_HOST: 'localhost',
                 DB_USER: 'user',
                 EVIRONMENENT: 'staging'
@@ -59,21 +138,21 @@ deploy.connect(host, function (shell) {
             file.upstart('/etc/init/myproject.conf', {
                 script: '/bin/myproject run',
             })
-        ]).then(function () {
-                exec('initctl start myproject');
-        });
-
-    }).fail(function (error) {
-        console.error(error.stack || error);
+        ];
     }).then(function () {
+        exec('initctl start myproject');
+    }).finally(function () {
         shell.disconnect();
-        process.exit();
     });
+}).fail(function (error) {
+    console.error(error.stack || error);
+}).done(function () {
+    process.exit();
 });
 ```
 
 ```javascript
-deploy.reguisteProfile('mongo-server', function(shell, callback) {
+deploy.reguisteProfile('mongo-server', function(shell) {
     return shell.profile('yum', 'filesystem', function (yum, fs) {
         Q.all([
             yum.install('mongo', 'mongo-server'),
@@ -81,10 +160,10 @@ deploy.reguisteProfile('mongo-server', function(shell, callback) {
         ]).then(function () {
             return shell.profile('sudo', function (yum, fs) {
                 return sudo.exec('mongod -f /etc/mongod.conf');
-            }).done(function () {
-                callback({
+            }).then(function () {
+                return {
                     restart: function() {/* ... */}
-                });
+                };
             });
         });
     });
@@ -92,18 +171,13 @@ deploy.reguisteProfile('mongo-server', function(shell, callback) {
 ```
 
 
-API
----
-
-
 Roadmap
 -------
 
 - apt, pacman profiles
-- load multiple profile
 - config backend -> json or mongodb ?
 - testable
-- profile migration
+- profile migration script, version number
 - simple cmd interface
 - simple web gui
 

@@ -11,12 +11,13 @@ deploy.connect({
     return shell.profile('filesystem', function (fs) {
         return fs.file('/etc/hosts');
     }).then(function (file) {
-        console.log(file);
+        //console.log(file);
         //return fs.write('/etc/hosts');
-    }).fail(function (error) {
-        console.error(error.stack || error);
-    }).then(function () {
+    }).finally(function () {
         shell.disconnect();
-        process.exit();
     });
+}).fail(function (error) {
+    console.error(error.stack || error);
+}).then(function () {
+    process.exit();
 });

@@ -18,10 +18,11 @@ deploy.connect({
         shell.exec('uptime')
     ]).then(function () {
         return shell.exec('echo "hello"');
-    }).fail(function (error) {
-        console.error(error.stack || error);
-    }).then(function () {
+    }).finally(function () {
         shell.disconnect();
-        process.exit();
     });
+}).fail(function (error) {
+    console.error(error.stack || error);
+}).then(function () {
+    process.exit();
 });

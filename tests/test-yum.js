@@ -17,7 +17,7 @@ deploy.connect({
             console.log(yum.version);
             return yum.install('hello');
         });
-    }).then(function () {
+    }).finally(function () {
         shell.disconnect();
     });
 }).fail(function (error) {
