@@ -22,6 +22,8 @@
     "ssh2": "latest"
   },
   "devDependencies": {
-    "jshint": "latest"
+    "jshint": "latest",
+    "should": "latest",
+    "sinon": "latest"
   }
 }

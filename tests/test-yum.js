@@ -17,10 +17,11 @@ deploy.connect({
             console.log(yum.version);
             return yum.install('hello');
         });
-    }).fail(function (error) {
-        console.error(error.stack || error);
     }).then(function () {
         shell.disconnect();
-        process.exit();
     });
+}).fail(function (error) {
+    console.error(error.stack || error);
+}).then(function () {
+    process.exit();
 });
