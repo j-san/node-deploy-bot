@@ -1,5 +1,6 @@
 
 var deploy = require('../lib'),
+    Shell = require('../lib/shell'),
     Q = require('q'),
     sinon = require('sinon'),
     should = require('should');
@@ -61,6 +62,7 @@ shell.connect({
     });
 }).fail(function (error) {
     console.error(error.stack || error);
+    process.exit(1);
 }).done(function () {
     process.exit();
 });

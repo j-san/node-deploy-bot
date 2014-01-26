@@ -11,5 +11,5 @@ vagrant-up:
 lint:
 	node_modules/.bin/jshint lib tests
 
-test: vagrant-uz
+test: vagrant-up
 	@./tests/run.sh $(TESTS)

@@ -3,6 +3,7 @@
 require('colors');
 
 var deploy = require('../lib'),
+    Shell = require('../lib/shell'),
     should = require('should'),
     Q = require('q');
 
@@ -20,13 +21,13 @@ shell.connect({
     return Q.all([
         shell.exec('sleep 1'),
         shell.exec('uptime')
-    ]).then(function () {
-        return shell.exec('uname -a');
-    }).then(function () {
-        done = true;
-    }).finally(function () {
-        shell.disconnect();
-    });
+    ]);
+}).then(function () {
+    return shell.exec('uname -a');
+}).then(function () {
+    done = true;
+}).finally(function () {
+    shell.disconnect();
 }).fail(function (error) {
     console.error(error.stack || error);
     process.exit(1);
