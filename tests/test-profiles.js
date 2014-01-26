@@ -18,12 +18,13 @@ spiedCallback = sinon.spy(function init () {
 });
 deploy.registerProfile('test-spy', spiedCallback);
 
-deploy.connect({
+var shell = new Shell();
+shell.connect({
     host: 'localhost',
     port: 2222,
     username: 'vagrant',
     privateKey: process.env.HOME + '/.vagrant.d/insecure_private_key'
-}, function (shell) {
+}).then(function () {
 
     return shell.profile('test-spy', function (profile) {
         return shell.profile('test-delayed', function (profile) {
@@ -60,6 +61,6 @@ deploy.connect({
     });
 }).fail(function (error) {
     console.error(error.stack || error);
-}).then(function () {
+}).done(function () {
     process.exit();
 });

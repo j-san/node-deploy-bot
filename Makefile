@@ -1,3 +1,4 @@
+TESTS = $(shell find tests/test-*.js)
 
 
 vagrant-box:
@@ -9,3 +10,6 @@ vagrant-up:
 
 lint:
 	node_modules/.bin/jshint lib tests
+
+test: vagrant-uz
+	@./tests/run.sh $(TESTS)

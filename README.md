@@ -2,7 +2,7 @@
 Deploy Bot
 ==========
 
-A simple api for an **agent less** DevOps infrastructure provisionning tool.
+A simple api for an **agent less** DevOps infrastructure provisionning bot.
 
 Why Node.js ?
 -------------
@@ -96,6 +96,16 @@ deploy.connect(host, function (shell) {
 
 ```
 
+Roadmap
+-------
+
+- Testable
+- Migrable, profile version
+- Profiles: aptitude, pacman
+- simple cmd interface
+- simple web gui
+- Hubot adapter
+
 
 Examples
 --------
@@ -169,15 +179,4 @@ deploy.reguisteProfile('mongo-server', function(shell) {
     });
 });
 ```
-
-
-Roadmap
--------
-
-- apt, pacman profiles
-- config backend -> json or mongodb ?
-- testable
-- profile migration script, version number
-- simple cmd interface
-- simple web gui
 

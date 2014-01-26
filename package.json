@@ -1,6 +1,6 @@
 {
   "name": "deploy-bot",
-  "description": "A simple api for an **agent less** DevOps infrastructure provisionning tool.",
+  "description": "A simple api for an **agent less** DevOps infrastructure provisionning bot.",
   "subdomain": "deploy",
   "scripts": {
     "test": ""
