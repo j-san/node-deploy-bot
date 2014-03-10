@@ -28,7 +28,8 @@
     "winston": "latest",
     "colors": "latest",
     "q": "latest",
-    "ssh2": "latest"
+    "ssh2": "latest",
+    "underscore": "^1.6.0"
   },
   "devDependencies": {
     "jshint": "latest",

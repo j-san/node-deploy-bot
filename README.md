@@ -81,7 +81,7 @@ deploy.connect(host, function (shell) {
 ### Script
 
 ```javascript
-deploy.registerProfile('myprofile', function (shell) {
+deploy.registerTask('mytask', function (shell) {
     // do stuff here
     // return an object
     return {
@@ -91,7 +91,7 @@ deploy.registerProfile('myprofile', function (shell) {
 });
 
 deploy.connect(host, function (shell) {
-    shell.profile('myprofile'); // execute stuff
+    shell.do('mytask'); // execute stuff
 });
 
 ```
