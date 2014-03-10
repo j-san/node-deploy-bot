@@ -14,13 +14,36 @@ Why Node.js ?
 3- promisses and events are perfect for dependencies and notifications
 
 
-API
----
+Command line API
+----------------
+
+### Configure servers hosts
+
+./deploy-bot.json or /etc/deploy-bot.json
+```json
+{
+    "server1": {
+        "host": "server1.lan",
+        "username": "user",
+        "privateKey": "/home/user/.ssh/id_rsa"
+    }
+}
+```
+
+then run tasks:
+
+```bash
+deploy-bot -r uptime server1
+```
+
+
+Programatic API
+---------------
 
 ### Connect
 
 ```javascript
-deploy = require('deploy');
+deploy = require('deploy-bot');
 
 var host = {
     host: 'localhost',

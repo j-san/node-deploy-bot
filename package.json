@@ -23,6 +23,7 @@
     "automated"
   ],
   "main": "lib/index",
+  "bin": "./bin/cli.js",
   "dependencies": {
     "commander": "latest",
     "winston": "latest",
