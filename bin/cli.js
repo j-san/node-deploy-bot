@@ -17,6 +17,7 @@ program
 
 
 function run (host, tasks) {
+    // TODO exit with higther exit code
     var shell = new Shell();
     shell.connect(host).then(function () {
         if (!Array.isArray(tasks)) {
