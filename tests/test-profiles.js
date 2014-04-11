@@ -1,68 +1,60 @@
 
-var deploy = require('../lib'),
+var bot = require('../lib'),
     Shell = require('../lib/shell'),
     Q = require('q'),
     sinon = require('sinon'),
     should = require('should');
 
 var done = 0;
+var test1 = sinon.spy();
+var test2 = sinon.spy();
+var testDelayed = sinon.spy(function testDelayed (shell) {
+    return Q.delay(200);
+});
 
-deploy.registerProfile('test-return-1', function (shell) {
-    return 123;
-});
-deploy.registerProfile('test-return-2', function (shell) {});
-deploy.registerProfile('test-delayed', function initTestDelayed (shell) {
-    return Q.delay(234, 200);
-});
-spiedCallback = sinon.spy(function init () {
-    return 42;
-});
-deploy.registerProfile('test-spy', spiedCallback);
+bot.registerTask('test-1', test1);
+bot.registerTask('test-2', test2);
+bot.registerTask('test-delayed', testDelayed);
+
 
 var shell = new Shell();
-shell.connect({
-    host: 'localhost',
-    port: 2222,
-    username: 'vagrant',
-    privateKey: process.env.HOME + '/.vagrant.d/insecure_private_key'
+shell.connect('vagrant').then(function () {
+    return shell.run('test-1');
 }).then(function () {
-
-    return shell.profile('test-spy', function (profile) {
-        return shell.profile('test-delayed', function (profile) {
-            return shell.profile('test-spy', function (profile) {
-                spiedCallback.called.should.equal(true);
-                spiedCallback.callCount.should.equal(1);
-                done++;
-            });
-        });
-    }).then(function () {
-        return [
-            shell.profile('test-return-1', function (profile) {
-                profile.should.equal(123);
-                done++;
-            }),
-            shell.profile('test-delayed', function (profile) {
-                profile.should.equal(234);
-                done++;
-            }),
-            shell.profile('test-return-2', function (profile) {
-                should(profile).equal(undefined);
-                done++;
-            })
-        ];
-    }).then(function () {
-        return shell.profile('test-return-1', 'test-return-2', 'test-delayed', function (test1, test2, delayed) {
-            test1.should.equal(123);
-            should(test2).equal(undefined);
-            delayed.should.equal(234);
+    return shell.run('test-delayed');
+}).then(function () {
+    return shell.run('test-1');
+}).then(function () {
+    test1.callCount.should.equal(2);
+    testDelayed.callCount.should.equal(1);
+    done++;
+}).then(function () {
+    return [
+        shell.run('test-1').then(function () {
+            test1.callCount.should.equal(3);
             done++;
-        });
-    }).finally(function () {
-        shell.disconnect();
-    });
+        }),
+        shell.run('test-delayed').then(function () {
+            testDelayed.callCount.should.equal(2);
+            done++;
+        }),
+        shell.run('test-2').then(function () {
+            test2.callCount.should.equal(1);
+            done++;
+        })
+    ];
+}).all().then(function () {
+    return shell.run('test-1', 'test-2');
+}).then(function () {
+    test1.callCount.should.equal(4);
+    test2.callCount.should.equal(2);
+    done++;
+}).finally(function () {
+    shell.disconnect();
 }).fail(function (error) {
     console.error(error.stack || error);
     process.exit(1);
 }).done(function () {
+    done.should.equal(5);
     process.exit();
 });

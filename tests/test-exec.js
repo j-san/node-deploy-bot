@@ -11,12 +11,7 @@ var deploy = require('../lib'),
 var done = false;
 
 var shell = new Shell();
-shell.connect({
-    host: 'localhost',
-    port: 2222,
-    username: 'vagrant',
-    privateKey: process.env.HOME + '/.vagrant.d/insecure_private_key'
-}).then(function () {
+shell.connect('vagrant').then(function () {
     console.log('connected');
     return Q.all([
         shell.exec('sleep 1'),
