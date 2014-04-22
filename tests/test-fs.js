@@ -1,22 +1,16 @@
 
 var Shell = require('../lib/shell'),
-    FileSystem = require('../lib/filesystem'),
-    Q = require('q');
+    FileSystem = require('../lib/filesystem');
 
 var shell = new Shell();
 var fs = new FileSystem(shell);
 shell.connect('vagrant').then(function () {
     return fs.ensure();
-}).then(function (file) {
+}).then(function () {
     return fs.file('/etc/hosts');
-}).then(function (file) {
+}).then(function () {
     //console.log(file);
     //return fs.write('/etc/hosts');
-}).finally(function () {
-    shell.disconnect();
-}).fail(function (error) {
-    console.error(error.stack || error);
-    process.exit(1);
 }).done(function () {
-    process.exit();
+    shell.disconnect();
 });

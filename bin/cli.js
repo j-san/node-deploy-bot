@@ -1,7 +1,6 @@
 #!/usr/bin/env node
 
-var deploy = require('../lib'),
-    Shell = require('../lib/shell'),
+var Shell = require('../lib/shell'),
     pkg = require('../package'),
     program = require('commander');
 

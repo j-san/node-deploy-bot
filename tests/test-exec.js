@@ -2,8 +2,7 @@
 
 require('colors');
 
-var deploy = require('../lib'),
-    Shell = require('../lib/shell'),
+var Shell = require('../lib/shell'),
     should = require('should'),
     Q = require('q');
 
@@ -21,12 +20,7 @@ shell.connect('vagrant').then(function () {
     return shell.exec('uname -a');
 }).then(function () {
     done = true;
-}).finally(function () {
-    shell.disconnect();
-}).fail(function (error) {
-    console.error(error.stack || error);
-    process.exit(1);
 }).done(function () {
     done.should.equal(true);
-    process.exit();
+    shell.disconnect();
 });

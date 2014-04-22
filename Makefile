@@ -9,7 +9,7 @@ vagrant-up:
 	vagrant up
 
 lint:
-	node_modules/.bin/jshint lib tests
+	node_modules/.bin/jshint . --exclude node_modules/
 
-test: vagrant-up
+test: lint vagrant-up
 	@./tests/run.sh $(TESTS)

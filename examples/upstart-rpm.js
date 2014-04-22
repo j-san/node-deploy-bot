@@ -1,3 +1,6 @@
+var Shell = require('../lib/shell');
+
+var shell = new Shell();
 shell.connect('host', function (shell) {
     return shell.install('nginx', 'postgres');
 }).then(function () {
@@ -13,7 +16,7 @@ shell.connect('host', function (shell) {
         })
     ];
 }).all().then(function () {
-    exec('initctl start myproject');
+    shell.exec('initctl start myproject');
 }).done(function () {
     shell.disconnect();
 });
