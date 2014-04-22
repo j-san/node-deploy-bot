@@ -50,7 +50,6 @@ var shell = new Shell();
 shell.connect('host', function (shell) {
     console.log(shell.banner);
     shell.disconnect();
-    process.exit();
 });
 ```
 
@@ -58,13 +57,13 @@ shell.connect('host', function (shell) {
 
 ```javascript
 shell.connect('host', function () {
+
     return [
         shell.install('yum', ['nodejs', 'mongodb']),
         shell.install('gem', 'foreman')
     ]
 }).all().done(function () {
     shell.disconnect();
-    process.exit();
 });
 ```
 
@@ -88,9 +87,8 @@ shell.connect('host', function () {
             template: 'mongodb/conf'
         })
     ];
-}).all().then(function () {
+}).all().done(function () {
     shell.disconnect();
-    process.exit();
 });
 ```
 
@@ -100,15 +98,15 @@ shell.connect('host', function () {
 var bot = require('deploy-bot');
 
 bot.registerTask('mytask', function (shell) {
-    // do stuff here
+    return shell.run('othertask'); // execute task
 });
 
-shell.connect('host', function () {
-    return shell.run('mytask'); // execute task
+bot.registerTask('othertask', function (shell) {
+    // do stuff here
 });
 ```
 
-or
+then
 
 ```sh
 deploy-bot -r mytask host
@@ -128,73 +126,5 @@ Roadmap
 
 
 
-Examples
---------
-
-```javascript
-Shell = require('deploy-bot/shell');
-
-var cwd = '/home/user/myproject';
-
-var shell = new Shell();
-shell.connect('host', function () {
-    return [
-        shell.exec('mkdir -p ' + cwd + '/var/log/'),
-        shell.exec('git clone git@github.com:you/myproject ' + cwd)
-    ]
-}).all().then(function () {
-    return shell.exec('make install', cwd);
-}).then(function () {
-    return shell.exec(cwd + 'myproject/bin/run');
-
-}).finally(function () {
-    shell.disconnect();
-}).fail(function (error) {
-    console.error(error.stack || error);
-    process.exit(1);
-}).done(function () {
-    process.exit();
-});
-```
-
-```javascript
-shell.connect('host', function (shell) {
-    return shell.install('nginx', 'postgres');
-}).then(function () {
-    return [
-        shell.file.envFile('/home/user/env', {
-            DB_HOST: 'localhost',
-            DB_USER: 'user',
-            EVIRONMENENT: 'staging'
-        }),
-        shell.file.addline('/home/user/.bashrc', 'source ~/env'),
-        shell.file.upstart('/etc/init/myproject.conf', {
-            script: '/bin/myproject run',
-        })
-    ];
-}).all().then(function () {
-    exec('initctl start myproject');
-}).finally(function () {
-    shell.disconnect();
-}).fail(function (error) {
-    console.error(error.stack || error);
-}).done(function () {
-    process.exit();
-});
-```
-
-```javascript
-bot.reguisterTask('mongo-server-install', function(shell) {
-    return Q.all([
-        shell.install('yum', ['mongo', 'mongo-server']),
-        shell.file.templateFile('/etc/mongod.conf')
-    ]).then(function () {
-        return shell.sudo('mongod -f /etc/mongod.conf');
-    })
-});
-
-bot.reguisterTask('mongo-server-restart', function(shell) {
-    /* ... */
-});
-```
-
+[Examples](examples)
+--------------------
