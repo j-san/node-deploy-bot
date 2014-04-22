@@ -2,7 +2,7 @@
 Deploy Bot
 ==========
 
-[![NPM](http://img.shields.io/npm/v/npm.svg)](https://www.npmjs.org/package/deploy-bot)
+[![NPM](http://img.shields.io/npm/v/deploy-bot.svg)](https://www.npmjs.org/package/deploy-bot)
 
 A simple api for an **agent less** DevOps infrastructure provisionning bot.
 
