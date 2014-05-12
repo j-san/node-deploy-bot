@@ -2,7 +2,11 @@
 
 var Shell = require('../lib/shell'),
     pkg = require('../package'),
-    program = require('commander');
+    program = require('commander'),
+    Q = require('q');
+
+Q.longStackSupport = true;
+require('../examples');
 
 function list(val) {
   return val.split(',');

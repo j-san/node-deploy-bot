@@ -4,7 +4,10 @@ Deploy Bot
 
 [![NPM](http://img.shields.io/npm/v/deploy-bot.svg)](https://www.npmjs.org/package/deploy-bot)
 
-A simple api for an **agent less** DevOps infrastructure provisionning bot.
+A simple tool for an **agent less** continuous deployment bot.
+
+    This project is under conception, if you would like to see it alive, **star it**.
+
 
 Why Node.js ?
 -------------
@@ -58,14 +61,12 @@ shell.connect('host', function (shell) {
 ### Install
 
 ```javascript
-shell.connect('host', function () {
+bot.registerTask('node-mondodb', function (shell) {
 
-    return [
+    return Q([
         shell.install('yum', ['nodejs', 'mongodb']),
         shell.install('gem', 'foreman')
-    ]
-}).all().done(function () {
-    shell.disconnect();
+    ]).all();
 });
 ```
 
@@ -73,10 +74,12 @@ shell.connect('host', function () {
 ### Configure
 
 ```javascript
-shell.connect('host', function () {
+bot.registerTask('conf', function (shell) {
 
-    return [
-        shell.install('yum', 'mongodb'),
+    return Q([
+        shell.install('yum', 'mongodb').then(function () {
+            return shell.run('rm -rf /tmp/*');
+        }),
         shell.user({ // not yet implemented
             name: 'appuser',
             home: '/var/lib/app',
@@ -88,30 +91,8 @@ shell.connect('host', function () {
         shell.file('/etc/mongod.conf', {
             template: 'mongodb/conf'
         })
-    ];
-}).all().done(function () {
-    shell.disconnect();
+    ]).all();
 });
-```
-
-### Script
-
-```javascript
-var bot = require('deploy-bot');
-
-bot.registerTask('mytask', function (shell) {
-    return shell.run('othertask'); // execute task
-});
-
-bot.registerTask('othertask', function (shell) {
-    // do stuff here
-});
-```
-
-then
-
-```sh
-deploy-bot -r mytask host
 ```
 
 Roadmap
